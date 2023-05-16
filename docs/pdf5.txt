@@ -1,0 +1,111 @@
+Appman integration
+
+Introduction: The AppMan OCR system is designed to digitize customer data by using Optical Character Recognition (OCR) technology to 
+
+scan and extract information from image files. This system provides a quick and efficient way to convert physical documents into digital 
+
+data, making it easier to store, manage, and access customer information.
+
+The AppMan OCR system scans image files and extracts the required information, such as name, address, and other personal details.
+
+Document Acceptance Criteria: 
+
+Car Registration Document: The platform accepts both real and photocopied versions of the Car Registration document. The images 
+
+can be in color or black & white/greyscale. The platform also accepts rotated photos.
+
+Thai National ID Document: The platform accepts both real and photocopied versions of the Thai National ID document. The images 
+
+should be of the card only, without any writing on them.
+
+Document Structure: 
+
+Car Registration Document: The Car Registration document has two pages, with the first page containing vehicle information and the 
+
+second page containing the car owner's personal information. It is mandatory for the platform to receive both pages of the document for 
+
+Optical Character Recognition (OCR) to work.
+
+Thai National ID Document: The Thai National ID document should be an image of the card, either real or photocopied.
+
+Document Processing: 
+
+Initial Checking: Upon receiving the documents, the platform will first check for compliance with the document acceptance criteria.
+
+Optical Character Recognition (OCR) Processing: If the document is accepted, it will undergo OCR processing to extract the relevant 
+
+information.
+
+Data Storage: The processed information will be stored in the platform's database for access and use.
+
+Access and Use: The processed information will be available for access and use by authorized personnel.
+
+Data Validation: The system validates the extracted data to ensure that it is accurate and complete.
+
+API Usage:
+
+POST Ocr image:
+
+Authentication - Admin
+
+METHOD - POST
+
+URL -  /utils/image-ocr  
+
+Content-Type -  multipart/form-data
+
+Data - 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+{
+
+  "file": <file>,
+
+  "file_type": "thai_id", (thai_id/car_registration)
+
+  "affiliate": <affiliate_id> (optional)
+
+}
+
+The above API will return OCR Data Model ID, which can be further used to fetch the data.
+
+GET Ocr image:
+
+Authentication - Admin
+
+METHOD - GET
+
+URL -  /utils/image-ocr/<id>  
+
+DELETE Ocr image:
+
+Authentication - Admin
+
+METHOD - DELETE
+
+URL -  /utils/image-ocr/<id>  
+
+FairdeeQuotationQuery has two new fields introduced  car_registration_ocr_data_id   and  national_id_ocr_data_id , these 
+
+fields are to be populated using create or patch of fairdee-quotation-query API to link ocr data with fqq,
+
+Conclusion:
+
+The technical design documentation for the Car Registration and Thai National ID Document Processing in Appman provides a 
+
+comprehensive outline of the processes involved in accepting and processing these documents. It covers the document acceptance criteria, 
+
+document structure, document processing flow, technical requirements, quality assurance, maintenance, and support. This document 
+
+serves as a guide for the development and deployment of the platform, ensuring its success and optimal performance.
+
+

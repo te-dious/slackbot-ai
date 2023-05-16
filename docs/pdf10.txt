@@ -1,0 +1,36 @@
+13th March Chatwoot Issue
+
+There were a few issues on 13th March we faced in Chatwoot today:
+
+1. Increased number of connection timeout errors and request timeout errors.
+
+2. Unusual LWLock:BufferIO on the database. 
+
+FINDINGS:
+
+1. Increased number of connection timeout errors and request timeout errors.
+
+a. The reason for the spike was that all the db connections were busy and were giving request timeouts, and after a point when all the 
+
+connections were occupied the API start throwing ConnectionTimeout.
+
+2.  Unusual LWLock:BufferIO on the database. 
+
+a. The  LWLock:BufferIO  event occurs when PostgreSQL is waiting for other processes to finish their input/output (I/O) operations 
+
+when concurrently trying to access a page. Its purpose is for the same page to be read into the shared buffer.
+
+b. The increase in the number of search queries around the same time may have caused the issue, as multiple queries may have been 
+
+trying to search for a common keyword present in all conversations, leading to the acquisition of the LWLock:BufferIO lock for all 
+
+conversations. This, in turn, caused the conversations' read/write operations to wait for a read/write lock that they were unable to 
+
+obtain, resulting in RequestTimeout errors after 15 seconds.
+
+c. Upgrading the database resources appears to have resolved the issue. Previously, restarting the database or killing the culprit query 
+
+would have resolved the issue, but now that resources have been increased, it may be possible to reconsider downgrading them.
+
+ 
+

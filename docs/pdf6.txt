@@ -1,0 +1,44 @@
+Chatwoot Staging accounts
+
+Staging: (Provider:  LINE Developers   )
+
+1. Staging FD bot:
+
+a. Channel: 
+
+LINE Developers  
+
+b. Qr Code->
+
+2. Staging FM bot:
+
+a. Channel: 
+
+LINE Developers  
+
+b. Qr Code->
+
+3. Staging IG bot:
+
+a. Channel: 
+
+LINE Developers  
+
+b. Qr Code->
+
+4. Staging AO bot:
+
+a. Channel: 
+
+LINE Developers  
+
+b. Qr Code->
+
+5. Staging FM bot:
+
+a. Channel: 
+
+LINE Developers  
+
+ 
+

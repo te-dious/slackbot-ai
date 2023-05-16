@@ -1,0 +1,115 @@
+TDD Credit endorsement
+
+Introduction
+
+The current endorsement process for VMI (pre-paid and post-paid credit) flow is done manually by OPS and Finance. This results in 
+
+several pain points, including a lack of support for returning money via netting credit invoices and manual adjustments made by Finance 
+
+for endorsement cases.
+
+The objective of this project is to automate the VMI endorsement process and address the identified pain points.
+
+Problem Statement
+
+Currently, the endorsement process for VMI (pre-paid and post-paid credit) flow is done manually by OPS and Finance, which results in 
+
+several pain points. These include a lack of support for returning money via netting credit invoices, manual adjustments made by Finance 
+
+for endorsement cases, and a lack of a place to store endorsed policies on the portal. Additionally, the existing cancellation flow only 
+
+supports certain types of cancellations. These manual processes lead to inefficiencies, errors, and increased time for customers to receive 
+
+their service. The problem is that the current system does not have the capability to automate the VMI endorsement process, resulting in a 
+
+time-consuming, error-prone, and inefficient process. This request aims to address these pain points by automating the VMI endorsement 
+
+process, providing support for netting credit invoices, storing endorsed policies on the portal, and modifying the cancellation flow to support 
+
+VMI cancellation but leave just CMI.
+
+Goals
+
+1. Engineering Excellence
+
+a. Reduction of efforts needed for endorsement of a credit sale.
+
+b. Simplifying rollout steps for credit endorsement.
+
+Feature Scope
+
+1. Endorsement initiation: Allows admins to initiate endorsements for VMI policies, including pre-paid and post-paid credit.
+
+2. Netting credit invoice: Automatically creates netting credit invoices for endorsement cases, providing support for adjusting money via 
+
+netting credit invoices.
+
+3. Policy storage: Provides a place to store endorsed policies on the portal, eliminating the need for manual storage on Google Drive.
+
+4. Cancellation support: Modified cancellation flow to support VMI cancellation but leave just CMI.
+
+5. User interface: Includes a user-friendly interface that allows admins to initiate endorsements and view the status of their requests, as 
+
+well as allows OPS and Finance to view and approve endorsements, access updated policy information, and view netting credit 
+
+invoices.
+
+Platform/Business Scope
+
+The scope of the project:
+
+1. The new module will be integrated with the existing invoicing and credit system to support netting credit invoices.
+
+2. It will be available for operations and finance teams.
+
+3. It will cover the VMI flow (pre-paid credit and post-paid credit) only.
+
+4. The change will improve the accuracy of credit invoice information, and provide easy access to endorsed policies on the portal, which 
+
+will lead to a more efficient and streamlined process.
+
+5. It will help to improve customer satisfaction by providing faster service and reducing manual errors.
+
+6. The new module is designed to be scalable, so it can be adjusted to company's future needs.
+
+Solution
+
+1. Disable the refund type options for FairDee to CBC and Insurer to CBC when the sale is a post-paid credit sale, a conditional statement 
+
+will be added to the endorsement window. This statement will check the type of sale and if it is a post-paid credit sale, the options for 
+
+FairDee to CBC and Insurer to CBC will be disabled.
+
+2. To create a refund-type option for Credit Invoice when the sale is a post-paid credit sale, a new option will be added to the refund type 
+
+drop-down menu in the endorsement window. This option will be labeled "Credit Invoice" and will be available only when the sale is a 
+
+post-paid credit sale.
+
+3. To adjust the financial information based on the "Netting at Credit Invoice" option, the following steps will be taken:
+
+a. When the admin user selects the "Netting at Credit Invoice" option and the finance team approves the endorsement or cancellation, 
+
+a new row will be added to the credit invoice. This row will include the amount that has been adjusted after the finance approval. 
+
+(which will be similar to the invoice details of the endorsement invoice).
+
+b. The new row will be displayed based on the date that Finance approves the endorsement. If they are in the same invoice cycle, the 
+
+transaction will be displayed right after the original purchase. If they are not in the same cycle, the row will be sorted based on the 
+
+original sale purchase date.
+
+c. The column name "Cancellation fee" will be changed to "Cancellation/Endorsement fee" and will record the positive value of the 
+
+cancellation fee.
+
+4. Show 2 options for refund type at the endorsement window for a pre-paid credit sale, 2 options will be added to the endorsement 
+
+window. The first option will be labeled "FairDee to CBC". The second option will be labeled "Insurer to CBC". These options will be 
+
+available only when the sale is a pre-paid credit sale.
+
+5. Other related flows will be the same as the existing VMI endorsement process.
+
+
