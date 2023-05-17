@@ -11,4 +11,4 @@ RUN pip install -r requirements.txt
 # Copy the current directory contents into the container at /code
 COPY . /code/
 
-CMD ["python", "app.py"]
+CMD ["python", "app.py", "python", "info_bot.py"]

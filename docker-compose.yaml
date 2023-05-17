@@ -6,3 +6,9 @@ services:
     command: python app.py
     volumes:
       - .:/code
+
+  info-ai:
+    build: .
+    command: python info_bot.py
+    volumes:
+      - .:/code

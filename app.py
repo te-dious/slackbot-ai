@@ -50,8 +50,8 @@ db = Chroma.from_texts(texts, embeddings)
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":5})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """Please compose a MySql query based on the given context. 
-Do not make assumptions about the schema. If the schema is not clear, state that it is unknown. 
+prompt_template = """Please compose a MySql query based on the given context.
+Do not make assumptions about the schema. If the schema is not clear, state that it is unknown.
 If there is an error message, use it to improve the previous query.
 Your response should be a valid SQL query. If a CTE is used, include its definition in the query.
 Please use only known table and column names.
@@ -73,9 +73,8 @@ Standalone question:"""
 CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(_template)
 
 llm = ChatOpenAI(model_name="gpt-4", temperature=0)
-qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, chain_type_kwargs=chain_type_kwargs)
-
 chat_history_qa = ConversationalRetrievalChain.from_llm(llm, retriever, condense_question_prompt=CONDENSE_QUESTION_PROMPT, combine_docs_chain_kwargs=chain_type_kwargs)
+
 # Initializes your app with your bot token and socket mode handler
 app = App(token=SLACK_BOT_TOKEN)
 
