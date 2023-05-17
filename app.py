@@ -22,7 +22,7 @@ REDASH_API_TOKEN = os.getenv('REDASH_API_TOKEN')
 logging.basicConfig(level=logging.INFO)
 
 # Here we load in the data from the text files created above.
-ps = list(Path("docs/").glob("**/*.txt"))
+ps = list(Path("docs/").glob("**/*_queries.txt"))
 
 data = []
 for p in ps:
@@ -58,8 +58,9 @@ retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":5})
 from langchain.prompts import PromptTemplate
 prompt_template = """As a senior analyst, write a detailed and correct MySql query to answer the analytical question based on the context you have.
 You should not assume anything, if you don't know the schema just don't make up any relation.
-If user sends some error message, use that error message as feedback to improve the last query sent.
+If user sends some error message, use that error message as feedback to improve the last query sent and return the working query after fixing the issue using the context and mysql syntax
 Your response should be only sql query. If any CTE is used please define that as well in the query itself.
+Strictly please don't assume anything, don't make up any relation or field name just say you don't know and add CTE query as well if required.
 {context}
 Question: {question}: """
 PROMPT = PromptTemplate(
@@ -131,7 +132,7 @@ def handle_app_mentions(body, say, client):
     handle_slack_message(message, message.get("thread_ts"), say, client)
 
 
-def handle_slack_message(message, thread_ts, say, client, direct=False):
+def handle_slack_message(message, thread_ts, say, client, reply_to_thread=False):
     logging.info(message)
     if thread_ts:
         # Retrieve the thread's messages
@@ -163,11 +164,9 @@ def handle_slack_message(message, thread_ts, say, client, direct=False):
         try:
             output = qa({"query": message['text']})
             try:
-                logging.info(output)
                 answer = f'{output["result"]}'
                 say(answer)
                 out = run_sql_query(output["result"], message['text'])
-                logging.info(out)
                 say(out)
             except Exception as e:
                 say(e)
