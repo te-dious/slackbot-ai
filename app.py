@@ -29,12 +29,6 @@ for p in ps:
     with open(p) as f:
         data.append(f.read())
 
-# Here we split the documents, as needed, into smaller chunks.
-# We do this due to the context limits of the LLMs.
-
-
-# Initialize the embedding model
-embeddings = OpenAIEmbeddings()
 
 # List to store the texts and their metadata
 docs = []
@@ -56,12 +50,12 @@ db = Chroma.from_texts(texts, embeddings)
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":5})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """As a senior analyst, write a detailed and correct MySql query to answer the analytical question based on the context you have.
-You should not assume anything, if you don't know the schema just don't make up any relation.
-If user sends some error message, use that error message as feedback to improve the last query sent and return the working query after fixing the issue using the context and mysql syntax
-Your response should be only sql query. If any CTE is used please define that as well in the query itself.
-Use table names and column names which you are sure exist.
-Strictly please don't assume anything, don't make up any relation or field name just say you don't know and add CTE query as well if required.
+prompt_template = """Please compose a MySql query based on the given context. 
+Do not make assumptions about the schema. If the schema is not clear, state that it is unknown. 
+If there is an error message, use it to improve the previous query.
+Your response should be a valid SQL query. If a CTE is used, include its definition in the query.
+Please use only known table and column names.
+Do not make up any relations or field names.
 {context}
 Question: {question}: """
 PROMPT = PromptTemplate(
@@ -110,7 +104,7 @@ def run_sql_query(mysql_query, text):
     response = requests.post(
         "https://redash.insbee.sg/api/queries",
         headers={"Authorization": f"Key {REDASH_API_TOKEN}"},
-        data=json.dumps(query),
+        data=query,
     )
 
     # Check the response status code.
@@ -124,56 +118,47 @@ def run_sql_query(mysql_query, text):
 @app.message(".*")
 def message_handler(message, say, client):
     logging.info("Received message: %s", message)
-    handle_slack_message(message, message.get("thread_ts"), say, client, True)
+    handle_slack_message(message, message.get("ts"), say, client)
 
 @app.event("app_mention")
 def handle_app_mentions(body, say, client):
     logging.info("Received app mention: %s", body)
     message = body['event']
-    handle_slack_message(message, message.get("thread_ts"), say, client)
+    handle_slack_message(message, message.get("ts"), say, client)
 
 
-def handle_slack_message(message, thread_ts, say, client, reply_to_thread=False):
+def handle_slack_message(message, thread_ts, say, client):
     logging.info(message)
-    if thread_ts:
-        # Retrieve the thread's messages
-        result = client.conversations_replies(channel=message['channel'], ts=thread_ts)
+    # Retrieve the thread's messages
+    result = client.conversations_replies(channel=message['channel'], ts=thread_ts)
 
-        chat_history = []
-        current_human_messages = []
+    chat_history = []
+    current_human_messages = []
 
-        for reply in result['messages'][:-1]:
-            if 'bot_id' in reply:  # bot's message
-                # Combine all preceding human messages into one
-                human_message = "\n".join(current_human_messages)
-                bot_message = reply['text']
-                chat_history.append((human_message, bot_message))
-                current_human_messages = []  # reset the list of human messages
-            else:  # user's message
-                current_human_messages.append(f"{reply['user']}: {reply['text']}")
-
-        # If there are any remaining human messages after the last bot message, add them to chat history
-        if current_human_messages:
+    for reply in result['messages'][:-1]:
+        if 'bot_id' in reply:  # bot's message
+            # Combine all preceding human messages into one
             human_message = "\n".join(current_human_messages)
-            chat_history.append((human_message, ""))
-        try:
-            output = chat_history_qa({"question": message['text'], "chat_history": chat_history})
-            say(output["answer"], thread_ts=thread_ts)
-        except Exception as e:
-            say("Please Try Agian", thread_ts=thread_ts)
-    else:
-        try:
-            output = qa({"query": message['text']})
-            try:
-                answer = f'{output["result"]}'
-                say(answer)
-                out = run_sql_query(output["result"], message['text'])
-                say(out)
-            except Exception as e:
-                say(e)
+            bot_message = reply['text']
+            chat_history.append((human_message, bot_message))
+            current_human_messages = []  # reset the list of human messages
+        else:  # user's message
+            current_human_messages.append(f"{reply['user']}: {reply['text']}")
 
-        except Exception as e:
-            say("Please Try Again")
+    # If there are any remaining human messages after the last bot message, add them to chat history
+    if current_human_messages:
+        human_message = "\n".join(current_human_messages)
+        chat_history.append((human_message, ""))
+    try:
+        output = chat_history_qa({"question": message['text'], "chat_history": chat_history})
+        answer = f'{output["answer"]}'
+        say(answer, thread_ts=thread_ts)
+        if not (chat_history):
+            out = run_sql_query(answer, message['text'])
+            say(out)
+
+    except Exception as e:
+        say("Please Try Again", thread_ts=thread_ts)
 
 
 # Start your app
