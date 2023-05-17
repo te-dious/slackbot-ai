@@ -1,3 +1,4 @@
+import pymysql
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -53,13 +54,9 @@ db = Chroma.from_texts(texts, embeddings)
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":2})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """Assistant is a large language model trained by OpenAI.
-Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations, writing sql simple and complex sql queries and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
-Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.
-Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist\.
-If question are relevant to context, AI answer using the context, and not make up any answer.
-If you are asked to summarise the conversation, you summarise the whole chat history provided.
-If you are asked to write sql query, you study the existing queries, existing queries have some temprory table or CTE if CTE is used you need to define CTE as well and give the output without assuming anything, if you have less information clearly state what more information do you need to accomplish the task.
+prompt_template = """As a senior analyst, given the sql queries figure out the schema, write a detailed and correct MySql query to answer the analytical question:
+If user sends some error message, use that error message as feedback to improve the last query sent.
+Your response should be only sql query.
 {context}
 Question: {question}:"""
 PROMPT = PromptTemplate(
@@ -68,16 +65,45 @@ PROMPT = PromptTemplate(
 
 chain_type_kwargs = {"prompt": PROMPT}
 
-qa = RetrievalQA.from_chain_type(llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.2), chain_type="stuff", retriever=retriever, chain_type_kwargs=chain_type_kwargs)
+_template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, such that no context of historical chat is missed and the follow up question is answered accordingly.
 
-chat_history_qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.4), retriever, combine_docs_chain_kwargs=chain_type_kwargs)
+Chat History:
+{chat_history}
+Follow Up Input: {question}
+Standalone question:"""
+CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(_template)
+
+llm = ChatOpenAI(model_name="gpt-4", temperature=0)
+qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, chain_type_kwargs=chain_type_kwargs)
+
+chat_history_qa = ConversationalRetrievalChain.from_llm(llm, retriever, condense_question_prompt=CONDENSE_QUESTION_PROMPT, combine_docs_chain_kwargs=chain_type_kwargs)
 # Initializes your app with your bot token and socket mode handler
 app = App(token=SLACK_BOT_TOKEN)
+
+
+def run_sql_query(query: str):
+    # Create a connection object.
+    """Executes SQL Queries."""
+    myconn = pymysql.connect(
+        host="localhost",
+        user="root",
+        passwd="vouch123",
+        database="vouch"
+    )
+    # Create a cursor object.
+    cur = myconn.cursor()
+    # Execute a query.
+    cur.execute(query)
+    # Fetch the results.
+    results = cur.fetchall()
+    # Close the connection.
+    myconn.close()
+    return results
 
 @app.message(".*")
 def message_handler(message, say, client):
     logging.info("Received message: %s", message)
-    handle_slack_message(message, message.get("thread_ts"), say, client)
+    handle_slack_message(message, message.get("thread_ts"), say, client, True)
 
 @app.event("app_mention")
 def handle_app_mentions(body, say, client):
@@ -86,9 +112,8 @@ def handle_app_mentions(body, say, client):
     handle_slack_message(message, message.get("thread_ts"), say, client)
 
 
-def handle_slack_message(message, thread_ts, say, client):
+def handle_slack_message(message, thread_ts, say, client, direct=False):
     logging.info(message)
-    print("thread_ts -> ", thread_ts)
     if thread_ts:
         # Retrieve the thread's messages
         result = client.conversations_replies(channel=message['channel'], ts=thread_ts)
@@ -112,15 +137,18 @@ def handle_slack_message(message, thread_ts, say, client):
             chat_history.append((human_message, ""))
         try:
             output = chat_history_qa({"question": message['text'], "chat_history": chat_history})
-            print(output)
             say(output["answer"], thread_ts=thread_ts)
         except Exception as e:
             say("Please Try Agian", thread_ts=thread_ts)
     else:
         try:
             output = qa({"query": message['text']})
-            print(output)
-            say(output["result"])
+            try:
+                out = run_sql_query(output["result"])
+                say(out)
+            except Exception as e:
+                say(e)
+
         except Exception as e:
             say("Please Try Agian")
 
