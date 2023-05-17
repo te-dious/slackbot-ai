@@ -60,6 +60,7 @@ prompt_template = """As a senior analyst, write a detailed and correct MySql que
 You should not assume anything, if you don't know the schema just don't make up any relation.
 If user sends some error message, use that error message as feedback to improve the last query sent and return the working query after fixing the issue using the context and mysql syntax
 Your response should be only sql query. If any CTE is used please define that as well in the query itself.
+Use table names and column names which you are sure exist.
 Strictly please don't assume anything, don't make up any relation or field name just say you don't know and add CTE query as well if required.
 {context}
 Question: {question}: """
