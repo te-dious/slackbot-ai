@@ -1,5 +1,6 @@
-import pymysql
 import os
+import requests
+import json
 from pathlib import Path
 from dotenv import load_dotenv
 from slack_bolt import App
@@ -10,12 +11,13 @@ import logging
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
-
+from langchain.llms import OpenAI
 load_dotenv()
 
 SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN')
 SLACK_APP_TOKEN = os.getenv('SLACK_APP_TOKEN')
 OPENAI_API_TOKEN = os.getenv('OPENAI_API_TOKEN')
+REDASH_API_TOKEN = os.getenv('REDASH_API_TOKEN')
 
 logging.basicConfig(level=logging.INFO)
 
@@ -51,14 +53,15 @@ embeddings = OpenAIEmbeddings()
 vectors = embeddings.embed_documents(texts)
 db = Chroma.from_texts(texts, embeddings)
 
-retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":2})
+retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":5})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """As a senior analyst, given the sql queries figure out the schema, write a detailed and correct MySql query to answer the analytical question:
+prompt_template = """As a senior analyst, write a detailed and correct MySql query to answer the analytical question based on the context you have.
+You should not assume anything, if you don't know the schema just don't make up any relation.
 If user sends some error message, use that error message as feedback to improve the last query sent.
-Your response should be only sql query.
+Your response should be only sql query. If any CTE is used please define that as well in the query itself.
 {context}
-Question: {question}:"""
+Question: {question}: """
 PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
@@ -80,25 +83,42 @@ chat_history_qa = ConversationalRetrievalChain.from_llm(llm, retriever, condense
 # Initializes your app with your bot token and socket mode handler
 app = App(token=SLACK_BOT_TOKEN)
 
+def run_sql_query(mysql_query, text):
+    """Creates a Redash query from a MySQL query string.
 
-def run_sql_query(query: str):
-    # Create a connection object.
-    """Executes SQL Queries."""
-    myconn = pymysql.connect(
-        host="localhost",
-        user="root",
-        passwd="vouch123",
-        database="vouch"
+    Args:
+        mysql_query: The MySQL query string.
+
+    Returns:
+        The Redash query object.
+    """
+    llm = OpenAI(model_name="gpt-4", temperature=0)
+    name = llm(f'convert the following text in triple ticks into a short crisp title. the text is as follows ```{text}```')
+
+    # Create the Redash query object.
+    query = {
+        "data_source_id": 1,
+        "query": mysql_query,
+        "name": name,
+        "description": text,
+        "tags": ["automated"],
+    }
+    
+
+    # Post the query to Redash.
+    response = requests.post(
+        "https://redash.insbee.sg/api/queries",
+        headers={"Authorization": f"Key {REDASH_API_TOKEN}"},
+        data=json.dumps(query),
     )
-    # Create a cursor object.
-    cur = myconn.cursor()
-    # Execute a query.
-    cur.execute(query)
-    # Fetch the results.
-    results = cur.fetchall()
-    # Close the connection.
-    myconn.close()
-    return results
+
+    # Check the response status code.
+    if response.status_code not in (200, 201):
+        raise Exception("Failed to create Redash query: {}".format(response.status_code))
+
+    # Return the Redash query object.
+    res = response.json()
+    return f"https://redash.insbee.sg/queries/{res['id']}"
 
 @app.message(".*")
 def message_handler(message, say, client):
@@ -144,13 +164,17 @@ def handle_slack_message(message, thread_ts, say, client, direct=False):
         try:
             output = qa({"query": message['text']})
             try:
-                out = run_sql_query(output["result"])
+                logging.info(output)
+                answer = f'{output["result"]}'
+                say(answer)
+                out = run_sql_query(output["result"], message['text'])
+                logging.info(out)
                 say(out)
             except Exception as e:
                 say(e)
 
         except Exception as e:
-            say("Please Try Agian")
+            say("Please Try Again")
 
 
 # Start your app
