@@ -12,8 +12,8 @@ from langchain.vectorstores import Chroma
 
 load_dotenv()
 
-SLACK_INFO_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN')
-SLACK_INFO_APP_TOKEN = os.getenv('SLACK_APP_TOKEN')
+SLACK_BOT_TOKEN = os.getenv('SLACK_INFO_BOT_TOKEN')
+SLACK_APP_TOKEN = os.getenv('SLACK_INFO_APP_TOKEN')
 OPENAI_API_TOKEN = os.getenv('OPENAI_API_TOKEN')
 
 logging.basicConfig(level=logging.INFO)

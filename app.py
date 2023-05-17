@@ -14,8 +14,8 @@ from langchain.vectorstores import Chroma
 from langchain.llms import OpenAI
 load_dotenv()
 
-SLACK_BOT_TOKEN = os.getenv('SLACK_INFO_BOT_TOKEN')
-SLACK_APP_TOKEN = os.getenv('SLACK_INFO_APP_TOKEN')
+SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN')
+SLACK_APP_TOKEN = os.getenv('SLACK_APP_TOKEN')
 OPENAI_API_TOKEN = os.getenv('OPENAI_API_TOKEN')
 REDASH_API_TOKEN = os.getenv('REDASH_API_TOKEN')
 
