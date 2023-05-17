@@ -97,13 +97,12 @@ def run_sql_query(mysql_query, text):
 
     # Create the Redash query object.
     query = {
-        "data_source_id": 1,
+        "data_source_id": 12,
         "query": mysql_query,
         "name": name,
         "description": text,
         "tags": ["automated"],
     }
-    
 
     # Post the query to Redash.
     response = requests.post(
