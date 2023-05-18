@@ -50,12 +50,12 @@ db = Chroma.from_texts(texts, embeddings)
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":5})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """Please compose a MySql query based on the given context.
-Do not make assumptions about the schema. If the schema is not clear, state that it is unknown.
-If there is an error message, use it to improve the previous query.
-Your response should be a valid SQL query. If a CTE is used, include its definition in the query.
-Please use only known table and column names.
-Do not make up any relations or field names.
+prompt_template = """As a senior analyst, write a detailed and correct MySql query to answer the analytical question based on the context you have.
+You should not assume anything, if you don't know the schema just don't make up any relation.
+If user sends some error message, use that error message as feedback to improve the last query sent and return the working query after fixing the issue using the context and mysql syntax
+Your response should be only sql query. If any CTE is used please define that as well in the query itself.
+Use table names and column names which you are sure exist.
+Strictly please don't assume anything, don't make up any relation or field name just say you don't know and add CTE query as well if required.
 {context}
 Question: {question}: """
 PROMPT = PromptTemplate(

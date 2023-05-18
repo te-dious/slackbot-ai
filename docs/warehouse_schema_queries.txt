@@ -1,0 +1,345 @@
+-- th_datawarehouse.dd_affiliate definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.dd_affiliate;
+
+--DROP TABLE th_datawarehouse.dd_affiliate;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.dd_affiliate
+(
+	affiliate_id BIGINT   ENCODE az64
+	,created_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,agent_code VARCHAR(36555)   ENCODE lzo
+	,account_type VARCHAR(36555)   ENCODE lzo
+	,parent_affiliate_id BIGINT   ENCODE az64
+	,parent_code VARCHAR(36555)   ENCODE lzo
+	,leader_affiliate_id BIGINT   ENCODE az64
+	,leader_code VARCHAR(36555)   ENCODE lzo
+	,current_level BIGINT   ENCODE az64
+	,master_affiliate_id VARCHAR(36555)   ENCODE lzo
+	,currently_assigned_to_bm VARCHAR(36555)   ENCODE lzo
+	,workshop VARCHAR(36555)   ENCODE lzo
+	,assigned_ae VARCHAR(36555)   ENCODE lzo
+	,user_id BIGINT   ENCODE az64
+	,is_signup_complete BIGINT   ENCODE az64
+	,signup_complete_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,has_broker_license DOUBLE PRECISION   ENCODE RAW
+	,broker_license_number VARCHAR(36555)   ENCODE lzo
+	,is_oic_data_verified DOUBLE PRECISION   ENCODE RAW
+	,oic_verified_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,broker_license_upload_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,nationalid_upload_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,photo_with_nationalid_upload_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,doc_verified_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,bank_name VARCHAR(36555)   ENCODE lzo
+	,ac_number VARCHAR(36555)   ENCODE lzo
+	,bank_verified BIGINT   ENCODE az64
+	,current_crm_staff_id VARCHAR(36555)   ENCODE lzo
+	,current_crm_team_id DOUBLE PRECISION   ENCODE RAW
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.dd_affiliate owner to ds;
+
+
+-- th_datawarehouse.dd_affiliate_bm_mapping definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.dd_affiliate_bm_mapping;
+
+--DROP TABLE th_datawarehouse.dd_affiliate_bm_mapping;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.dd_affiliate_bm_mapping
+(
+	affiliate_id BIGINT   ENCODE az64
+	,assigned_bm VARCHAR(36555)   ENCODE lzo
+	,valid_from TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,valid_till TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.dd_affiliate_bm_mapping owner to ds;
+
+
+-- th_datawarehouse.dd_cmi_solo_sale definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.dd_cmi_solo_sale;
+
+--DROP TABLE th_datawarehouse.dd_cmi_solo_sale;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.dd_cmi_solo_sale
+(
+	sale_id BIGINT   ENCODE az64
+	,affiliate_id BIGINT   ENCODE az64
+	,sub_affiliate_id VARCHAR(36555)   ENCODE lzo
+	,policy_number VARCHAR(36555)   ENCODE lzo
+	,policy_start_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,premium_without_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,tax_amt DOUBLE PRECISION   ENCODE RAW
+	,duty_amt DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,updated_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.dd_cmi_solo_sale owner to ds;
+
+
+-- th_datawarehouse.dd_renewals definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.dd_renewals;
+
+--DROP TABLE th_datawarehouse.dd_renewals;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.dd_renewals
+(
+	sale_id BIGINT   ENCODE az64
+	,sold_on_date DATE   ENCODE az64
+	,policy_start_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,rsale_id BIGINT   ENCODE az64
+	,rsold_on_date DATE   ENCODE az64
+	,rpolicy_start_date TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,renewal_flow INTEGER   ENCODE az64
+	,updated_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.dd_renewals owner to ds;
+
+
+-- th_datawarehouse.fd_sale_all_product_unified_view definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.fd_sale_all_product_unified_view;
+
+--DROP TABLE th_datawarehouse.fd_sale_all_product_unified_view;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.fd_sale_all_product_unified_view
+(
+	id BIGINT   ENCODE az64
+	,product_type_name VARCHAR(36555)   ENCODE lzo
+	,policy_sold_on_at VARCHAR(36555)   ENCODE lzo
+	,policy_purchased_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,policy_status VARCHAR(36555)   ENCODE lzo
+	,payment_status VARCHAR(36555)   ENCODE lzo
+	,sale_status VARCHAR(36555)   ENCODE lzo
+	,payment_method VARCHAR(36555)   ENCODE lzo
+	,payment_option VARCHAR(36555)   ENCODE lzo
+	,sale_type VARCHAR(36555)   ENCODE lzo
+	,package_type VARCHAR(36555)   ENCODE lzo
+	,affiliate_id BIGINT   ENCODE az64
+	,sub_affiliate_id BIGINT   ENCODE az64
+	,policy_number VARCHAR(36555)   ENCODE lzo
+	,chassis_number VARCHAR(36555)   ENCODE lzo
+	,vehicle_number VARCHAR(36555)   ENCODE lzo
+	,member_discount_amt DOUBLE PRECISION   ENCODE RAW
+	,member_cmi_discount_amt DOUBLE PRECISION   ENCODE RAW
+	,affiliate_to_customer_discount DOUBLE PRECISION   ENCODE RAW
+	,change_of_agent BIGINT   ENCODE az64
+	,ops_assisted_deduction BIGINT   ENCODE az64
+	,qr_id DOUBLE PRECISION   ENCODE RAW
+	,sale_transfer_quote_id BIGINT   ENCODE az64
+	,insurance_class VARCHAR(36555)   ENCODE lzo
+	,commission_rate DOUBLE PRECISION   ENCODE RAW
+	,assistance_deduction_rate DOUBLE PRECISION   ENCODE RAW
+	,instalment_deduction DOUBLE PRECISION   ENCODE RAW
+	,insurer_code VARCHAR(36555)   ENCODE lzo
+	,premium_without_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,tax_amt DOUBLE PRECISION   ENCODE RAW
+	,duty_amt DOUBLE PRECISION   ENCODE RAW
+	,premium_after_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,fairdee_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,fairdee_commission_wht DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,affiliate_commission_vat DOUBLE PRECISION   ENCODE RAW
+	,incentives_amt DOUBLE PRECISION   ENCODE RAW
+	,incentives_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,referral_bonus_amt DOUBLE PRECISION   ENCODE RAW
+	,referral_bonus_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,managment_fee_amt DOUBLE PRECISION   ENCODE RAW
+	,managment_fee_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,coupon_amt DOUBLE PRECISION   ENCODE RAW
+	,coupon_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,updated_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.fd_sale_all_product_unified_view owner to ds;
+
+
+-- th_datawarehouse.fd_sale_unified_view definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.fd_sale_unified_view;
+
+--DROP TABLE th_datawarehouse.fd_sale_unified_view;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.fd_sale_unified_view
+(
+	id BIGINT   ENCODE az64
+	,product_type_name VARCHAR(36555)   ENCODE lzo
+	,policy_sold_on_at VARCHAR(36555)   ENCODE lzo
+	,policy_purchased_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,policy_status VARCHAR(36555)   ENCODE lzo
+	,payment_status VARCHAR(36555)   ENCODE lzo
+	,sale_status VARCHAR(36555)   ENCODE lzo
+	,payment_method VARCHAR(36555)   ENCODE lzo
+	,payment_option VARCHAR(36555)   ENCODE lzo
+	,sale_type VARCHAR(36555)   ENCODE lzo
+	,package_type VARCHAR(36555)   ENCODE lzo
+	,affiliate_id BIGINT   ENCODE az64
+	,sub_affiliate_id VARCHAR(36555)   ENCODE lzo
+	,policy_number VARCHAR(36555)   ENCODE lzo
+	,chassis_number VARCHAR(36555)   ENCODE lzo
+	,vehicle_number VARCHAR(36555)   ENCODE lzo
+	,member_discount_amt DOUBLE PRECISION   ENCODE RAW
+	,member_cmi_discount_amt DOUBLE PRECISION   ENCODE RAW
+	,affiliate_to_customer_discount VARCHAR(36555)   ENCODE lzo
+	,change_of_agent BIGINT   ENCODE az64
+	,ops_assisted_deduction VARCHAR(36555)   ENCODE lzo
+	,qr_id VARCHAR(36555)   ENCODE lzo
+	,sale_transfer_quote_id VARCHAR(36555)   ENCODE lzo
+	,insurance_class VARCHAR(36555)   ENCODE lzo
+	,commission_rate DOUBLE PRECISION   ENCODE RAW
+	,assistance_deduction_rate DOUBLE PRECISION   ENCODE RAW
+	,instalment_deduction DOUBLE PRECISION   ENCODE RAW
+	,insurer_code VARCHAR(36555)   ENCODE lzo
+	,premium_without_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,tax_amt DOUBLE PRECISION   ENCODE RAW
+	,duty_amt DOUBLE PRECISION   ENCODE RAW
+	,premium_after_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,fairdee_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,fairdee_commission_wht DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,affiliate_commission_vat DOUBLE PRECISION   ENCODE RAW
+	,incentives_amt DOUBLE PRECISION   ENCODE RAW
+	,incentives_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,referral_bonus_amt DOUBLE PRECISION   ENCODE RAW
+	,referral_bonus_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,managment_fee_amt DOUBLE PRECISION   ENCODE RAW
+	,managment_fee_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,coupon_amt DOUBLE PRECISION   ENCODE RAW
+	,coupon_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,updated_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.fd_sale_unified_view owner to ds;
+
+
+-- th_datawarehouse.fd_sale_unified_view_hist definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.fd_sale_unified_view_hist;
+
+--DROP TABLE th_datawarehouse.fd_sale_unified_view_hist;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.fd_sale_unified_view_hist
+(
+	id BIGINT   ENCODE az64
+	,product_type_name VARCHAR(36555)   ENCODE lzo
+	,policy_sold_on_at VARCHAR(36555)   ENCODE lzo
+	,policy_purchased_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,policy_status VARCHAR(36555)   ENCODE lzo
+	,payment_status VARCHAR(36555)   ENCODE lzo
+	,sale_status VARCHAR(36555)   ENCODE lzo
+	,payment_method VARCHAR(36555)   ENCODE lzo
+	,payment_option VARCHAR(36555)   ENCODE lzo
+	,sale_type VARCHAR(36555)   ENCODE lzo
+	,package_type VARCHAR(36555)   ENCODE lzo
+	,affiliate_id BIGINT   ENCODE az64
+	,sub_affiliate_id VARCHAR(36555)   ENCODE lzo
+	,policy_number VARCHAR(36555)   ENCODE lzo
+	,chassis_number VARCHAR(36555)   ENCODE lzo
+	,vehicle_number VARCHAR(36555)   ENCODE lzo
+	,member_discount_amt DOUBLE PRECISION   ENCODE RAW
+	,member_cmi_discount_amt DOUBLE PRECISION   ENCODE RAW
+	,affiliate_to_customer_discount VARCHAR(36555)   ENCODE lzo
+	,change_of_agent BIGINT   ENCODE az64
+	,ops_assisted_deduction VARCHAR(36555)   ENCODE lzo
+	,qr_id VARCHAR(36555)   ENCODE lzo
+	,sale_transfer_quote_id VARCHAR(36555)   ENCODE lzo
+	,insurance_class VARCHAR(36555)   ENCODE lzo
+	,commission_rate DOUBLE PRECISION   ENCODE RAW
+	,assistance_deduction_rate DOUBLE PRECISION   ENCODE RAW
+	,instalment_deduction DOUBLE PRECISION   ENCODE RAW
+	,insurer_code VARCHAR(36555)   ENCODE lzo
+	,premium_without_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,tax_amt DOUBLE PRECISION   ENCODE RAW
+	,duty_amt DOUBLE PRECISION   ENCODE RAW
+	,premium_after_tax_amt DOUBLE PRECISION   ENCODE RAW
+	,fairdee_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,fairdee_commission_wht DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_amt DOUBLE PRECISION   ENCODE RAW
+	,expected_affiliate_commission_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,affiliate_commission_vat DOUBLE PRECISION   ENCODE RAW
+	,incentives_amt DOUBLE PRECISION   ENCODE RAW
+	,incentives_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,referral_bonus_amt DOUBLE PRECISION   ENCODE RAW
+	,referral_bonus_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,managment_fee_amt DOUBLE PRECISION   ENCODE RAW
+	,managment_fee_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,coupon_amt DOUBLE PRECISION   ENCODE RAW
+	,coupon_wht_amt DOUBLE PRECISION   ENCODE RAW
+	,updated_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,processed_date DATE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.fd_sale_unified_view_hist owner to ds;
+
+
+-- th_datawarehouse.fd_self_serve definition
+
+-- Drop table
+
+-- DROP TABLE th_datawarehouse.fd_self_serve;
+
+--DROP TABLE th_datawarehouse.fd_self_serve;
+CREATE TABLE IF NOT EXISTS th_datawarehouse.fd_self_serve
+(
+	quotation_query_id BIGINT   ENCODE az64
+	,quotation_id VARCHAR(36555)   ENCODE lzo
+	,sale_id VARCHAR(36555)   ENCODE lzo
+	,affiliate_id BIGINT   ENCODE az64
+	,affiliate_user_id BIGINT   ENCODE az64
+	,current_state VARCHAR(36555)   ENCODE lzo
+	,quote_created_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,pdf_created_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+	,payment_proof_uploaded_at VARCHAR(36555)   ENCODE lzo
+	,report_sale_button_clicked_at VARCHAR(36555)   ENCODE lzo
+	,data_submited_at VARCHAR(36555)   ENCODE lzo
+	,sold_on VARCHAR(36555)   ENCODE lzo
+	,quote_created_by VARCHAR(36555)   ENCODE lzo
+	,pdf_created_by VARCHAR(36555)   ENCODE lzo
+	,payment__proof_uploaded_by VARCHAR(36555)   ENCODE lzo
+	,report_sale_button_clicked_by VARCHAR(36555)   ENCODE lzo
+	,data_submited_by VARCHAR(36555)   ENCODE lzo
+	,type_of_quote VARCHAR(36555)   ENCODE lzo
+	,type_of_manual_quote VARCHAR(36555)   ENCODE lzo
+	,insurer_code VARCHAR(36555)   ENCODE lzo
+	,vehicle_number_before_payment VARCHAR(36555)   ENCODE lzo
+	,vehicle_number_after_payment VARCHAR(36555)   ENCODE lzo
+	,insurance_class_while_created_quote VARCHAR(36555)   ENCODE lzo
+	,insurance_class_on_price_list VARCHAR(36555)   ENCODE lzo
+	,possible_api_sale VARCHAR(36555)   ENCODE lzo
+	,sold_via_api VARCHAR(36555)   ENCODE lzo
+	,policy_status VARCHAR(36555)   ENCODE lzo
+	,payment_status VARCHAR(36555)   ENCODE lzo
+	,sale_type VARCHAR(36555)   ENCODE lzo
+	,payment_method_for_downpayment VARCHAR(36555)   ENCODE lzo
+	,payment_method VARCHAR(36555)   ENCODE lzo
+	,transferred_quote_for_id VARCHAR(36555)   ENCODE lzo
+	,sale_transfer_quotation_link VARCHAR(36555)   ENCODE lzo
+	,quotation_link VARCHAR(36555)   ENCODE lzo
+	,sale_link VARCHAR(36555)   ENCODE lzo
+	,updated_at TIMESTAMP WITHOUT TIME ZONE   ENCODE az64
+)
+DISTSTYLE AUTO
+;
+ALTER TABLE th_datawarehouse.fd_self_serve owner to ds;
