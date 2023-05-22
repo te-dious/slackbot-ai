@@ -165,7 +165,7 @@ def handle_slack_message(message, thread_ts, say, client):
         say(answer, thread_ts=thread_ts)
         if not (chat_history):
             out = run_sql_query(answer, message['text'])
-            say(out)
+            say(out, thread_ts=thread_ts)
 
     except Exception as e:
         say("Please Try Again", thread_ts=thread_ts)
