@@ -12,3 +12,9 @@ services:
     command: python info_bot.py
     volumes:
       - .:/code
+
+  conversation-analyser:
+    build: .
+    command: python conversation_analyser.py
+    volumes:
+      - .:/code
