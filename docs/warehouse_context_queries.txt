@@ -1,0 +1,1122 @@
+Introduction
+
+
+A data dictionary is a document that provides a detailed description of the data elements or attributes within a database or data management system. It serves as a reference guide for understanding the structure, format, and meaning of data stored in a database.
+
+
+Here it includes information about each data element, such as its name, data type, length, allowable values, relationships with other data elements, and any constraints or rules governing its use. It may also include information about the source of the data, the frequency of updates, and any known quality issues.
+
+
+Project documentation also will be put in the data dictionary. The documentation is critical for ensuring project success, facilitating collaboration, and supporting the ongoing management of the project.
+
+
+Table of Content
+
+
+Introduction
+Table of Content
+Data Dictionary Standard Procedure
+Dictionary Template
+Data Dictionary
+Finance Data Dictionary
+FIN001 - GWP Amount
+FIN002 - Number of Policy (NoP)
+FIN003 - Commission Received
+FIN004 - Commission Paid
+FIN005 - Tax Absorption
+FIN006 - Net Revenue
+DWH Tables
+th_datawarehouse
+fd_sale_all_product_unified_view
+Project
+Sale Cancellation
+Unified View Data Verification
+
+
+
+
+Data Dictionary Standard Procedure 
+
+
+Data governance structure : 
+
+
+Data Governor : Aditya Triadi
+
+
+Data Steward : - Ipshit Singh
+                 - Alwi Mulachela
+                 - Abilash Selvam
+  
+
+Dictionary Template 
+
+
+Component
+	Description
+	Example
+	Title
+	* title should contain department code, number and name 
+
+
+Department Code+Number + - + Name
+
+
+* department code stated below on misc.
+
+
+* number starts from 1, 2, etc. 
+
+
+	data : gwp amount 
+
+
+department code : FIN
+
+
+number : 001 
+
+
+name : gwp amount 
+
+
+FIN001 - GWP Amount
+
+
+	Body
+	Here are the content of data docs, 
+
+
+1. Change History : The history of document changes
+
+
+2. Description : this section should contain data definition, and objectives 
+
+
+3. Owner : Metrics owner
+
+
+4. Source Table : Name of tables / datamart which used to calculate the metric
+
+
+5. Report / Dashboard Related : List of reports / dashboard which used the metric
+
+
+6. Impacted Department : List of departments that using related metrics for reporting (Finance / Marketing / Partnership, …)
+
+
+7. Formula : 
+   1. Calculation : if the has a specified calculation, please note down on this section 
+   2.  SQL Script : the query on how to get the that based on description 
+
+
+8. Refresh Schedule : The schedule when the metric is updated
+
+
+9. Relation : define other function that is using this dictionary, different terms for dictionary, breakdown / child dictionary, and list report that related
+
+
+10. Appendix
+	
+
+Department Code
+
+
+
+
+Department
+	Code
+	Finance
+	FIN
+	Operations
+	OPS
+	Commercial
+	COM
+	Product
+	PRD
+	
+
+
+
+Data Dictionary
+
+
+Finance Data Dictionary
+
+
+FIN001 - GWP Amount
+
+
+Updates History
+
+
+
+
+No
+	PIC
+	Desc
+	Date
+	1
+	Alwi Husein Mulachela
+	Initial Document
+	14/03/2023
+	
+
+
+
+Description
+GWP (Gross Written Premium) is a total premium written by Fairdee.
+
+
+Owner
+
+
+Department
+	Owner
+	Finance
+	Nantischa Sonsri
+	
+
+
+
+Source Table
+
+
+* th_datawarehouse.fd_sale_all_product_unified_view
+
+
+
+
+Report / Dashboard Related
+
+
+
+
+No
+	Visualisation
+	Name
+	Link
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+Impacted Department
+
+
+
+
+No
+	Department
+	PIC
+	1
+	Commercial
+	
+
+	2
+	Operations
+	
+
+	
+
+
+
+
+
+Formula
+
+
+GWP = Premium without text
+	
+
+
+
+
+
+SQL Script
+
+
+
+
+select sum(premium_without_tax)
+from th_datawarehouse.fd_sale_all_product_unified_view
+	
+
+
+
+
+
+FIN002 - Number of Policy (NoP)
+
+
+Updates History
+
+
+
+
+No
+	PIC
+	Desc
+	Date
+	1
+	Alwi Husein Mulachela
+	Initial Document
+	14/03/2023
+	
+
+
+
+Description
+NoP (Number of Policy) is a total policy purchased by the customer.
+
+
+Owner
+
+
+Department
+	Owner
+	Finance
+	Nantischa Sonsri
+	
+
+
+
+Source Table
+
+
+* th_datawarehouse.fd_sale_all_product_unified_view
+
+
+
+
+Report / Dashboard Related
+
+
+
+
+No
+	Visualisation
+	Name
+	Link
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+Impacted Department
+
+
+
+
+No
+	Department
+	PIC
+	1
+	Commercial
+	
+
+	2
+	Operations
+	
+
+	
+
+
+
+
+
+Formula
+
+
+NoP = 
+	
+
+
+
+
+
+SQL Script
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+FIN003 - Commission Received
+
+
+Updates History
+
+
+
+
+No
+	PIC
+	Desc
+	Date
+	1
+	Alwi Husein Mulachela
+	Initial Document
+	14/03/2023
+	
+
+
+
+Description
+Commission Received is a total commission earned by Fairdee without any bonus or incentive deduction
+
+
+Owner
+
+
+Department
+	Owner
+	Finance
+	Nantischa Sonsri
+	
+
+
+
+Source Table
+
+
+* th_datawarehouse.fd_sale_all_product_unified_view
+
+
+
+
+Report / Dashboard Related
+
+
+
+
+No
+	Visualisation
+	Name
+	Link
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+Impacted Department
+
+
+
+
+No
+	Department
+	PIC
+	1
+	Commercial
+	
+
+	2
+	Operations
+	
+
+	
+
+
+
+
+
+Formula
+
+
+Commission_received = insurer_commission_received + insurer_incentive_received
+	
+
+
+
+
+
+SQL Script
+
+
+
+
+select sum(fairdee_commission_amt)
+from th_datawarehouse.fd_sale_all_product_unified_view
+	
+
+
+
+
+
+FIN004 - Commission Paid
+
+
+Updates History
+
+
+
+
+No
+	PIC
+	Desc
+	Date
+	1
+	Alwi Husein Mulachela
+	Initial Document
+	14/03/2023
+	
+
+
+
+Description
+Commission Paid is the total commission that given to affiliate by Fairdee
+
+
+Owner
+
+
+Department
+	Owner
+	Finance
+	Nantischa Sonsri
+	
+
+
+
+Source Table
+
+
+* th_datawarehouse.fd_sale_all_product_unified_view
+
+
+
+
+Report / Dashboard Related
+
+
+
+
+No
+	Visualisation
+	Name
+	Link
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+Impacted Department
+
+
+
+
+No
+	Department
+	PIC
+	1
+	Commercial
+	
+
+	2
+	Operations
+	
+
+	
+
+
+
+
+
+Formula
+
+
+Commission_paid = sum(gwp) * affiliate_commission_rate
+	
+
+
+
+
+
+SQL Script
+
+
+
+
+select sum(expected_affiliate_commission_amt)
+from th_datawarehouse.fd_sale_all_product_unified_view
+	
+
+
+
+
+
+FIN005 - Tax Absorption
+
+
+Updates History
+
+
+
+
+No
+	PIC
+	Desc
+	Date
+	1
+	Alwi Husein Mulachela
+	Initial Document
+	16/03/2023
+	
+
+
+
+Description
+Tax Absorption is a tax payment by Fairdee for some affiliate type that has not been included yet on their affiliate commission
+
+
+Owner
+
+
+Department
+	Owner
+	Finance
+	Nantischa Sonsri
+	
+
+
+
+Source Table
+
+
+* th_datawarehouse.fd_sale_all_product_unified_view
+
+
+
+
+Report / Dashboard Related
+
+
+
+
+No
+	Visualisation
+	Name
+	Link
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+Impacted Department
+
+
+
+
+No
+	Department
+	PIC
+	1
+	Commercial
+	
+
+	2
+	Operations
+	
+
+	
+
+
+
+
+
+Formula
+
+
+Tax absorption = wht_cost + nominee_cost
+
+
+Wht_cost_vmi = ( (affiliate_commission - (gwp * 18%) ) /1.03 ) * 3%
+Wht_cost_cmi = ( (affiliate_commission - (gwp * 12%) ) /1.03 ) * 3%
+
+
+Nominee_cost_vmi = ( (affiliate_commission - (gwp * 18%) ) /1.03 ) / 520,000 * 3000 
+Nominee_cost_cmi = ( (affiliate_commission - (gwp * 12%) ) /1.03 ) / 520,000 * 3000 
+	
+
+
+
+
+
+SQL Script
+
+
+
+
+
+
+	
+
+
+
+
+
+FIN006 - Net Revenue
+
+
+Updates History
+
+
+
+
+No
+	PIC
+	Desc
+	Date
+	1
+	Alwi Husein Mulachela
+	Initial Document
+	16/03/2023
+	
+
+
+
+Description
+Net Revenue is the net commission Fairdee earned after the commission earned deducted by cost that has to paid or given to affiliate
+
+
+Owner
+
+
+Department
+	Owner
+	Finance
+	Nantischa Sonsri
+	
+
+
+
+Source Table
+
+
+* th_datawarehouse.fd_sale_all_product_unified_view
+
+
+
+
+Report / Dashboard Related
+
+
+
+
+No
+	Visualisation
+	Name
+	Link
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+Impacted Department
+
+
+
+
+No
+	Department
+	PIC
+	1
+	Commercial
+	
+
+	2
+	Operations
+	
+
+	
+
+
+
+
+
+Formula
+
+
+commission_received - commission_paid - tax_absorption + ov
+	
+
+
+
+
+
+SQL Script
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DWH Tables
+
+
+th_datawarehouse
+
+
+fd_sale_all_product_unified_view
+
+
+The fd_sale_all_product_unfied_view is a combination of union table result from
+* fd_sale_unified_view (contain VMI sales information)
+* fd_sale_cmi_solo_unified_view (contains CMI Solo sales information)
+* fd_sale_covid_unified_view (contains Covid product type sales information)
+* fd_sale_dengue_unified_view (contains Dengue product type sales information)
+* fd_sale_pa_unified_view (contains Personal Accident product type sales information)
+
+
+The way its construct is similar like datawarehouse.fd_sale_unified_view
+
+
+select * from th_datawarehouse.fd_sale_all_product_unified_view
+	
+
+
+
+The table grind from sale_id perspective which all information reflects per sales level, not per policy, invoice or payment level, to avoid duplication / misinformation due to its business characteristic.
+
+
+Table Information
+
+
+Column Name
+	Data Type
+	Description
+	id
+	integer
+	sale_id. originated from policy_fairdeesale table, column id
+	product_type_name
+	varchar
+	Diversification from the product union
+* Motor
+* CMI Solo
+* Covid
+* Dengue
+* PA
+	policy_sold_on_at
+	date
+	Main cut-off date, represent the first valid payment date
+	policy_purchased_at
+	timestamp
+	From sale created_at, timestamp where the sale_id was created
+	policy_status
+	varchar
+	Represent the policy ops process and can determine the sale status too
+	payment_status
+	varchar
+	Identify latest payment completion
+* Payment_verified
+* Payment_refunded
+* commission_transferred
+	sale_status
+	varchar
+	Logic made by a combination of policy_status, payment_status, instalment_status and invoice status
+* Is_reported   (booked)
+* Is_sold           (net or complete)
+* Is_cancelled  (cancelled)
+	payment_method
+	varchar
+	Simple info of method to complete the sales
+* Credit
+* Bank transfer
+* QR
+	payment_option
+	varchar
+	Additional info on how the sale will be completed by the customer
+* Instalment
+* Postpaid_credit
+* prepaid_credit
+	sale_type
+	varchar
+	Type on how payment completion
+* credit
+* cbc_to_fairdee
+* credit_exceeded
+* cbc_to_insurer
+* instalment
+	package_type
+	varchar
+	Sales info and selling process
+* COA (change of agent)
+* system_stored
+* Manual
+* Renewal_flow
+	affiliate_id
+	integer
+	Affiliate id that contains agent, subagent, garage for inspection, and bm as their id
+	sub_affiliate_id
+	integer
+	ID that considered as their assistance / downline for certain type of channel
+	policy_number
+	varchar
+	Policy number
+	chassis_number
+	varchar
+	Vehicle chassis number
+	vehicle_number
+	varchar
+	Vehicle number
+	member_discount_amt
+	float
+	Discout given to customer from fairdee that registered as an affiliate
+	member_cmi_discount_amt
+	float
+	Discout given to customer from fairdee that registered as an affiliate for a CMI sale
+	affiliate_to_customer_discount
+	float
+	Discount given from agent  to customer by deducting from their commission
+	change_of_agent
+	boolean
+	Extension sales info of agent changing on handling the sales
+	ops_assisted_deduction
+	boolean
+	Determining helps from ops team when handling the sales or its a self serve process by the agent
+	qr_id
+	integer
+	Id of qr scan registered
+	sale_transfer_quote_id
+	integer
+	Quotation if its a transferred to another or new quotation
+	insurance_class
+	varchar
+	Policy product type name
+	commission_rate
+	float
+	Rate of commission for agent
+	assistance_deduction_rate
+	float
+	Deduction rate for the ops team who helps handling the policy
+	instalment_deduction
+	float
+	Deduction rate for an instalment payment
+	insurer_code
+	float
+	Code for the insurance company
+	premium_without_tax_amt
+	float
+	GWP without tax and duty
+	tax_amt
+	float
+	VAT amount for  premium
+	duty_amt
+	float
+	Duty price for premium
+	premium_after_tax_amt
+	float
+	GWP with tax and duty included
+	fairdee_commission_amt
+	float
+	Commission received by fairdee per sales without witholding tax
+	fairdee_commission_wht
+	float
+	Withholding tax amount from the commission that received by Fairdee
+	expected_affiliate_commission_amt
+	float
+	Expected commission given to affiliate without what and vat tax
+	expected_affiliate_commission_wht_amt
+	float
+	Witholding tax amount for affiliate from the affiliate commission
+	affiliate_commission_vat
+	float
+	VAT for affiliate from the affiliate commission
+	incentives_amt
+	float
+	Additional incentive given to affiliate without tax
+	incentives_wht_amt
+	float
+	WHT for affiliate from the incentive
+	referral_bonus_amt
+	float
+	Additional bonus given to affiliate without tax
+	referral_bonus_wht_amt
+	float
+	WHT for affiliate from their bonus
+	managment_fee_amt
+	float
+	Additional incentive given to affiliate without tax
+	managment_fee_wht_amt
+	float
+	WHT fo affiliate from their management fee incentive 
+	coupon_amt
+	float
+	Discount from coupon without tax
+	coupon_wht_amt
+	float
+	WHT from coupon
+	updated_at
+	timestamp
+	Latest timestamp of when the data updates
+	
+
+
+
+Query List
+
+
+* fd_sale_unified_view
+* fd_sale_cmi_solo_unified_view 
+* fd_sale_covid_unified_view 
+* fd_sale_dengue_unified_view 
+* fd_sale_pa_unified_view
+
+
+
+
+Refresh Scheduling & Type
+
+
+Table
+	Schedule
+	fd_sale_all_product_unified_view
+	Daily at minute 45 past hour 4 JKT Time
+	
+
+Insert type                         = incremental
+Data reload days                = last 30 days
+Dependency                        = -
+Schedule interval (crone)        = '45 21 * * *'
+
+
+
+
+Project
+Sale Cancellation
+
+
+type of cancel :
+- policy docs rejected
+- incomplete 1 time payment
+- incomplete installment type payment
+- customer requested to cancel
+
+
+
+
+report used by fin fairdee team
+1. get from credit invoice [system]
+2. and compare from cmi report
+
+
+
+
+Sales_cancel_date = the date where the sales got cancelled
+
+
+
+
+
+
+sale_id
+	sold_on
+	premium
+	booked_premium
+	canceled_premium
+	status
+	1
+	Jan 1
+	10000
+	10000
+	0
+	complete
+	1
+	Mar 1
+	-10000
+	0
+	10000
+	canceled
+	
+
+
+
+
+
+
+
+Unified View Data Verification
+
+
+
+
+Gsheets : CMI Solo Commission Rate Checker
