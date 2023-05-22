@@ -34,7 +34,7 @@ for p in ps:
 docs = []
 metadatas = []
 
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+text_splitter = CharacterTextSplitter(chunk_size=1600, chunk_overlap=0)
 texts = []
 
 # Process each text file in the directory
@@ -45,27 +45,38 @@ for text in data:
 # Generate embeddings and store (only need to run once)
 embeddings = OpenAIEmbeddings()
 vectors = embeddings.embed_documents(texts)
-db = Chroma.from_texts(texts, embeddings)
+db = Chroma.from_texts(texts, embeddings, persist_directory="database")
+
+# conversation_id, staff, agent categories, account_type, chat_resolution_time, conversation start and end time
 
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":5})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """As a senior analyst, write a detailed and correct MySql query to answer the analytical question based on the context you have.
-You should not assume anything, if you don't know the schema just don't make up any relation.
-If user sends some error message, use that error message as feedback to improve the last query sent and return the working query after fixing the issue using the context and mysql syntax
-Your response should be only sql query. If any CTE is used please define that as well in the query itself.
-Use table names and column names which you are sure exist.
-Strictly please don't assume anything, don't make up any relation or field name just say you don't know and add CTE query as well if required.
-{context}
-Question: {question}: """
+prompt_template = """Tasked as a seasoned analyst for a Thai insurtech firm that aids insurance agents in selling policies and earning commissions, your task is to construct a comprehensive and accurate Redshift query to address the analytical inquiry based on the provided context. The context involves agents interacting with staff members for help during the policy buying process or using the online platform provided by the insurtech company. The insurance purchasing process includes obtaining a quote, plan selection, document submission, reporting a policy sale with customer details, making a payment, issuing a policy, and completing the transaction when the policy is physically delivered. Agents can also request renewals for existing policies previously bought from the company. The Thai market may involve some manual processes like sending payment proof, paying premiums in installments, requesting a physical car inspection, manually delivering the policy via postal service, endorsing an existing policy, or change of agent (COA - switching from one broker to your company). Often, agents are part of multi-level marketing structures with management fees and referral fees involved.
+
+To fulfill this task, please follow these steps:
+
+1. Decipher and abstract overarching themes from the human language input, focusing on aspects such as time-based comparisons, benchmarks, and alterations in states.
+2. Translate the abstracted high-level concepts into their equivalent analytical query language constructs.
+3. Transform the analytical query language constructs into PostgreSQL-compatible SQL queries. This process involves recognizing necessary tables and columns, defining essential SQL operations, and executing calculations, aggregations, or filtering as deemed necessary.
+4. Integrate the SQL queries created in step 3 to devise a complete SQL query that fulfills the user's request.
+5. Produce the formulated SQL query as an output for the user to either execute directly or adjust as per their needs.
+
+Your response should exclusively consist of a SQL query, specifically using PostgreSQL syntax, as Redshift is built on a modified version of PostgreSQL. Utilize table names and
+column names that you are certain of their existence. Strictly refrain from making assumptions; if you lack knowledge of any relationship or field name, simply state your uncerta
+inty. Include a Common Table Expression (CTE) query, if required.
+
+ {context}
+Inquiry: {question}:"""
 PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
 
 chain_type_kwargs = {"prompt": PROMPT}
 
-_template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, such that no context of historical chat is missed and the follow up question is answered accordingly.
-
+_template = """Given the following conversation and a follow up question, rephrase the follow up questions.
+My objective is to establish a conversation thread that incorporates SQL queries and user feedback. I'd like the historical context to retain the final query, just enhancing the
+ prior query based on the user's feedback.
 Chat History:
 {chat_history}
 Follow Up Input: {question}
@@ -87,7 +98,7 @@ def run_sql_query(mysql_query, text):
     Returns:
         The Redash query object.
     """
-    llm = OpenAI(model_name="gpt-4", temperature=0)
+    llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0)
     name = llm(f'convert the following text in triple ticks into a short crisp title. the text is as follows ```{text}```')
 
     # Create the Redash query object.
@@ -103,12 +114,12 @@ def run_sql_query(mysql_query, text):
     response = requests.post(
         "https://redash.insbee.sg/api/queries",
         headers={"Authorization": f"Key {REDASH_API_TOKEN}"},
-        data=query,
+        data=json.dumps(query),
     )
 
     # Check the response status code.
     if response.status_code not in (200, 201):
-        raise Exception("Failed to create Redash query: {}".format(response.status_code))
+        raise Exception("Failed to create Redash query: {}".format(response.text))
 
     # Return the Redash query object.
     res = response.json()

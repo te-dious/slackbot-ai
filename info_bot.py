@@ -48,7 +48,7 @@ for text in data:
 # Generate embeddings and store (only need to run once)
 embeddings = OpenAIEmbeddings()
 vectors = embeddings.embed_documents(texts)
-db = Chroma.from_texts(texts, embeddings)
+db = Chroma.from_texts(texts, embeddings, persist_directory="traning_docs")
 
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":2})
 
