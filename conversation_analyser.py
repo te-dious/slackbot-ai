@@ -78,13 +78,13 @@ app = App(token=SLACK_BOT_TOKEN)
 @app.message(".*")
 def message_handler(message, say, client):
     logging.info("Received message: %s", message)
-    handle_slack_message(message, message.get("thread_ts"), say, client)
+    handle_slack_message(message, message.get("ts"), say, client)
 
 @app.event("app_mention")
 def handle_app_mentions(body, say, client):
     logging.info("Received app mention: %s", body)
     message = body['event']
-    handle_slack_message(message, message.get("thread_ts"), say, client)
+    handle_slack_message(message, message.get("ts"), say, client)
 
 
 def handle_slack_message(message, thread_ts, say, client):
