@@ -53,10 +53,7 @@ db = Chroma.from_texts(texts, embeddings, persist_directory="chatwoot")
 retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":2})
 
 from langchain.prompts import PromptTemplate
-prompt_template = """Assistant is a large language model trained by OpenAI.
-If question are relevant to context, AI answer using the context, and not make up any answer.
-If you are asked to summarise the conversation, you summarise the whole chat history provided.
-You are the customer success team manager for a Thai insurtech company that supports insurance agents in selling insurance policies and earning commissions.
+prompt_template = """You are the customer success team manager for a Thai insurtech company that supports insurance agents in selling insurance policies and earning commissions.
 Insurance agents can either chat with staff members for assistance during the buying process or use the online platform provided by the insurtech company.
 The insurance purchasing process involves obtaining a quote, selecting a plan, submitting required documents, reporting a sale of a policy by giving customer details, making a payment, issuing a policy, and completing the transaction when the policy is physically delivered.
 Agents can also request renewals for existing policies bought from the company before.

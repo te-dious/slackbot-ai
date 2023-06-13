@@ -9786,3 +9786,27 @@ on monthly.cohort_month=joining.cohort_month
 
 
 
+TITLE: Request for Commission Rate and Vehicle Number for June 2022 Sales
+SQL: WITH sales_data AS (
+    SELECT
+        sale.id AS sale_id,
+        fq.vehicle_number,
+        sale.sold_on::date AS sold_on,
+        fq.commission_rate
+    FROM
+        vouch_db.policy_fairdeesale sale
+        join vouch_db.utils_fairdeequotation fq on sale.quotation_id = fq.id
+    WHERE
+        sale.sold_on::date >= '2022-06-01'
+        AND sale.sold_on::date <= '2022-06-30'
+)
+SELECT
+    sd.sale_id,
+    sd.vehicle_number,
+    sd.sold_on,
+    sd.commission_rate AS current_year_commission_rate
+FROM
+    sales_data sd
+ORDER BY
+    sd.sold_on;
+

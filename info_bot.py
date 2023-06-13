@@ -9,6 +9,7 @@ import logging
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
+from langchain.agents import initialize_agent, AgentType
 
 load_dotenv()
 
@@ -54,12 +55,12 @@ retriever = db.as_retriever(search_type="similarity", search_kwargs={"k":2})
 
 from langchain.prompts import PromptTemplate
 prompt_template = """Assistant is a large language model trained by OpenAI.
-Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations, writing sql simple and complex sql queries and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
+Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations, translate or discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.
 Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.
 Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist\.
 If question are relevant to context, AI answer using the context, and not make up any answer.
 If you are asked to summarise the conversation, you summarise the whole chat history provided.
-If you are asked to write sql query, you study the existing queries, existing queries have some temprory table or CTE if CTE is used you need to define CTE as well and give the output without assuming anything, if you have less information clearly state what more information do you need to accomplish the task.
+If you are asked to tanslate the conversation, you translate the whole chat history provided.
 {context}
 Question: {question}:"""
 PROMPT = PromptTemplate(
@@ -68,7 +69,7 @@ PROMPT = PromptTemplate(
 
 chain_type_kwargs = {"prompt": PROMPT}
 
-qa = RetrievalQA.from_chain_type(llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.2), chain_type="stuff", retriever=retriever, chain_type_kwargs=chain_type_kwargs)
+qa = RetrievalQA.from_llm(llm=ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.2), chain_type="stuff", retriever=retriever, chain_type_kwargs=chain_type_kwargs)
 
 chat_history_qa = ConversationalRetrievalChain.from_llm(ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.4), retriever, combine_docs_chain_kwargs=chain_type_kwargs)
 # Initializes your app with your bot token and socket mode handler
